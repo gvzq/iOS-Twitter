@@ -2,8 +2,8 @@
 //  Tweet.swift
 //  Twitter
 //
-//  Created by Gerardo Vazquez on 2/14/16.
-//  Copyright © 2016 Gerardo Vazquez. All rights reserved.
+//  Created by Dayang Xiang on 2/14/16.
+//  Copyright © 2016 Dayang Xiang. All rights reserved.
 //
 
 import UIKit
@@ -27,10 +27,7 @@ class Tweet: NSObject {
         let formatter = NSDateFormatter()
         formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
         createdAt = formatter.dateFromString(createdAtString!)
-        favouritesCount = dictionary["favourites_count"] as? Int
-        if (favouritesCount == nil) {
-            favouritesCount = 0
-        }
+        favouritesCount = dictionary["favorite_count"] as? Int
         retweetCount = dictionary["retweet_count"] as? Int
         favorited = dictionary["favorited"] as? Bool
         retweeted = dictionary["retweeted"] as? Bool

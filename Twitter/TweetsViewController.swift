@@ -12,6 +12,7 @@ import MBProgressHUD
 class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     var tweets: [Tweet]?
+    var imageSelected: UIImageView?
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -20,6 +21,11 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         
         tableView.delegate = self
         tableView.dataSource = self
+        
+        self.navigationController!.navigationBar.barTintColor = UIColor(red: 0.5, green: 0.8, blue: 1.0, alpha: 1.0)
+        self.navigationController!.navigationBar.tintColor = UIColor.whiteColor()
+        self.navigationController!.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        self.tableView.separatorInset = UIEdgeInsetsZero
         
         TwitterClient.sharedInstance.homeTimeLineWithParams(nil, completion: {(tweets, error) -> () in
             self.tweets = tweets
@@ -49,6 +55,17 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetCell", forIndexPath: indexPath) as! TweetCell
         cell.tweet = tweets![indexPath.row]
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: "profileImageTapped:")
+        cell.profileImageView.tag = indexPath.row
+        cell.profileImageView.addGestureRecognizer(tapGesture)
+        cell.profileImageView.userInteractionEnabled = true
+        
+        cell.selectionStyle = .Default
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.whiteColor()
+        cell.selectedBackgroundView = backgroundView
+        
         return cell
     }
     
@@ -63,15 +80,25 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         })
         refreshControl.endRefreshing()
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    func profileImageTapped(sender: UIGestureRecognizer) {
+        imageSelected = sender.view as? UIImageView
+        self.performSegueWithIdentifier("segueForProfile", sender: nil)
     }
-    */
+
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "segueForDetail" {
+            let cell = sender as! UITableViewCell
+            let indexPath = tableView.indexPathForCell(cell)
+            let tweet = tweets![indexPath!.row]
+            let tweetDetailViewController = segue.destinationViewController as! TweetDetailViewController
+            tweetDetailViewController.tweet = tweet
+        }
+        if segue.identifier == "segueForProfile" {
+            let tweet = tweets![(imageSelected?.tag)!]
+            let profileViewController = segue.destinationViewController as! ProfileViewController
+            profileViewController.user = tweet.user
+        }
+    }
 
 }

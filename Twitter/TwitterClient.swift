@@ -11,8 +11,8 @@ import AFNetworking
 import BDBOAuth1Manager
 
 let twitterBaseURL = NSURL(string: "https://api.twitter.com")
-let twitterConsumerKey = "7Lbf3rWaKc6PxntYrudMK1GBD"
-let twitterConsumerSecret = "pG1wBRiZFt4vZ2QzfqarQbHgR1quH5c9BiITHbsoe7QYQY3aQt"
+let twitterConsumerKey = "IJ248NjFcurccjIhkeRX9jpAA"
+let twitterConsumerSecret = "hHWTuN9jnW8e565Gt9BVY8RgIIY2bjMSroGuzXsDUhQS9N10sq"
 
 class TwitterClient: BDBOAuth1SessionManager {
     
@@ -33,6 +33,19 @@ class TwitterClient: BDBOAuth1SessionManager {
             },
             failure: { (task: NSURLSessionDataTask?, error: NSError) -> Void in
                 print("Error getting home timeline")
+                completion(tweets: nil, error: error)
+            }
+        )
+    }
+    
+    func userTimeLineWithParams(screen_name: String?, params: NSDictionary?, completion: (tweets: [Tweet]?, error: NSError?) -> ()) {
+        TwitterClient.sharedInstance.GET("1.1/statuses/user_timeline.json?screen_name=\(screen_name!)&count=20", parameters: params, progress: nil,
+            success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
+                let tweets = Tweet.tweetsWithArray(response as! [NSDictionary])
+                completion(tweets: tweets, error: nil)
+            },
+            failure: { (task: NSURLSessionDataTask?, error: NSError) -> Void in
+                print("Error getting user timeline")
                 completion(tweets: nil, error: error)
             }
         )
@@ -97,6 +110,17 @@ class TwitterClient: BDBOAuth1SessionManager {
             },
             failure: { (task: NSURLSessionDataTask?, error: NSError) -> Void in
                 print("Error destroying a favorite")
+            }
+        )
+    }
+    
+    func tweet(message: String) {
+        TwitterClient.sharedInstance.POST("1.1/statuses/update.json?status=\(message)", parameters: nil, progress: nil,
+            success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
+                print("Tweet")
+            },
+            failure: { (task: NSURLSessionDataTask?, error: NSError) -> Void in
+                print("Error Tweeting")
             }
         )
     }

@@ -10,15 +10,16 @@ import UIKit
 import BDBOAuth1Manager
 
 class ViewController: UIViewController {
-    @IBOutlet weak var logo: UIImageView!
 
+    @IBOutlet weak var logo: UIImageView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let url = "https://pbs.twimg.com/profile_images/666407537084796928/YBGgi9BO.png"
         let logoUrl = NSURL(string: url)
         self.logo.setImageWithURL(logoUrl!)
-
+        
     }
 
     override func didReceiveMemoryWarning() {

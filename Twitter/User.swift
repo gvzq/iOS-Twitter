@@ -2,8 +2,8 @@
 //  User.swift
 //  Twitter
 //
-//  Created by Gerardo Vazquez on 2/14/16.
-//  Copyright © 2016 Gerardo Vazquez. All rights reserved.
+//  Created by Dayang Xiang on 2/14/16.
+//  Copyright © 2016 Dayang Xiang. All rights reserved.
 //
 
 import UIKit
@@ -17,6 +17,9 @@ class User: NSObject {
     var name: String?
     var screenName: String?
     var profileImageUrl: String?
+    var tweetsCount: Int?
+    var followingCount: Int?
+    var followersCount: Int?
     var dictionary: NSDictionary
     
     init(dictionary: NSDictionary) {
@@ -25,6 +28,9 @@ class User: NSObject {
         name = dictionary["name"] as? String
         screenName = dictionary["screen_name"] as? String
         profileImageUrl = dictionary["profile_image_url"] as? String
+        tweetsCount = dictionary["statuses_count"] as? Int
+        followingCount = dictionary["friends_count"] as? Int
+        followersCount = dictionary["followers_count"] as? Int
     }
     
     func logout() {

@@ -16,16 +16,22 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var timeStampLabel: UILabel!
     @IBOutlet weak var favoriteCountLabel: UILabel!
     @IBOutlet weak var retweetCountLabel: UILabel!
+    @IBOutlet weak var favoriteButton: UIButton!
+    @IBOutlet weak var retweetButton: UIButton!
     
     @IBAction func onFavorite(sender: AnyObject) {
         if (tweet.favorited!) {
             TwitterClient.sharedInstance.destroyFavorite(tweet.id!)
             tweet.favouritesCount!--
             tweet.favorited = false
+            favoriteButton.setImage(UIImage(named: "favorite"), forState: .Normal)
+            favoriteCountLabel.textColor = UIColor.grayColor()
         } else {
             TwitterClient.sharedInstance.createFavorite(tweet.id!)
             tweet.favouritesCount!++
             tweet.favorited = true
+            favoriteButton.setImage(UIImage(named: "favorite_on"), forState: .Normal)
+            favoriteCountLabel.textColor = UIColor.redColor()
         }
         favoriteCountLabel.text = "\(tweet.favouritesCount!)"
     }
@@ -35,15 +41,17 @@ class TweetCell: UITableViewCell {
             TwitterClient.sharedInstance.unretweet(tweet.id!)
             tweet.retweetCount!--
             tweet.retweeted = false
+            retweetButton.setImage(UIImage(named: "retweet"), forState: .Normal)
+            retweetCountLabel.textColor = UIColor.grayColor()
         } else {
             TwitterClient.sharedInstance.retweet(tweet.id!)
             tweet.retweetCount!++
             tweet.retweeted = true
-            print("\(tweet.id!)")
+            retweetButton.setImage(UIImage(named: "retweet_on"), forState: .Normal)
+            retweetCountLabel.textColor = UIColor(red:0.1, green:0.72, blue:0.6, alpha:1.0)
         }
         retweetCountLabel.text = "\(tweet.retweetCount!)"
     }
-    
     
     var tweet: Tweet! {
         didSet {
@@ -54,9 +62,9 @@ class TweetCell: UITableViewCell {
             let hourDifference = NSCalendar.currentCalendar().components(.Hour, fromDate: tweet.createdAt!, toDate: NSDate(), options: []).hour
             let minDifference =  NSCalendar.currentCalendar().components(.Minute, fromDate: tweet.createdAt!, toDate: NSDate(), options: []).minute
             if (hourDifference == 0) {
-                timeStampLabel.text = "\(minDifference)Min"
+                timeStampLabel.text = "\(minDifference)m"
             } else if (hourDifference <= 24) {
-                timeStampLabel.text = "\(hourDifference)H"
+                timeStampLabel.text = "\(hourDifference)h"
             } else {
                 let dateFormatter = NSDateFormatter()
                 dateFormatter.dateFormat = "MM/dd/yyyy"
@@ -64,18 +72,30 @@ class TweetCell: UITableViewCell {
             }
             favoriteCountLabel.text = "\(tweet.favouritesCount!)"
             retweetCountLabel.text = "\(tweet.retweetCount!)"
-            print("Retweet: \(tweet.retweetCount!)")
+            if (tweet.favorited!) {
+                favoriteButton.setImage(UIImage(named: "favorite_on"), forState: .Normal)
+                favoriteCountLabel.textColor = UIColor.redColor()
+            } else {
+                favoriteButton.setImage(UIImage(named: "favorite"), forState: .Normal)
+                favoriteCountLabel.textColor = UIColor.grayColor()
+            }
+            if (tweet.retweeted!) {
+                retweetButton.setImage(UIImage(named: "retweet_on"), forState: .Normal)
+                retweetCountLabel.textColor = UIColor(red:0.1, green:0.72, blue:0.6, alpha:1.0)
+            } else {
+                retweetButton.setImage(UIImage(named: "retweet"), forState: .Normal)
+                retweetCountLabel.textColor = UIColor.grayColor()
+            }
         }
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        self.layoutMargins = UIEdgeInsetsZero
+        self.preservesSuperviewLayoutMargins = false
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 }
